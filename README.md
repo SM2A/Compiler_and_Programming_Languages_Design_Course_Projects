@@ -3,5 +3,5 @@ This repository contains my Compiler and Programming Languages Design Cours Proj
 
 We will develop a new language called C-- in 4 phases.
 
-1. Phase 1 : Lexical analysis and Parser
+1. Phase 1 : Lexical and Syntax analyser
 
