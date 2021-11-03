@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Compiler_Lexical" type="Application" factoryName="Application">
+    <output_file path="$PROJECT_DIR$/src/Phase1/output.txt" />
+    <option name="MAIN_CLASS_NAME" value="org.antlr.v4.gui.TestRig" />
+    <module name="Compiler" />
+    <option name="PROGRAM_PARAMETERS" value="Phase1.Lexical_Analyser tokens Src\Phase1\test.cmm" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
