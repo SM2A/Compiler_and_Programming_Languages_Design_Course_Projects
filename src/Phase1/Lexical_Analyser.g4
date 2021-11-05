@@ -1,82 +1,31 @@
 lexer grammar Lexical_Analyser;
 
 // Declaration
-MAIL_FUNCTION 			: 'main()'
-							{System.out.println(getLine() + " : " + "MAIL_FUNCTION" + " => " + getText());};
-STRUCT_DECLARATION		: 'struct'
-							{System.out.println(getLine() + " : " + "STRUCT_DECLARATION" + " => " + getText());};
+MAIL_FUNCTION 			: 'main()';
+STRUCT_DECLARATION		: 'struct';
 
 // Types
-PRIMITIVE_TYPE			: INT
-							{System.out.println(getLine() + " : " + "PRIMITIVE_TYPE" + " => " + getText());}
-						| BOOL
-							{System.out.println(getLine() + " : " + "PRIMITIVE_TYPE" + " => " + getText());}
-						| LIST
-                        	{System.out.println(getLine() + " : " + "PRIMITIVE_TYPE" + " => " + getText());}
-						| FUNCTIOR_POINTER
-                        	{System.out.println(getLine() + " : " + "PRIMITIVE_TYPE" + " => " + getText());};
+PRIMITIVE_TYPE			: INT | BOOL | LIST | FUNCTIOR_POINTER;
 
 // Primitives Values
-INTEGER_VALUE			: ZERO
-							{System.out.println(getLine() + " : " + "INTEGER_VALUE" + " => " + getText());}
-						| NON_ZERO_NUMBER NUMBER*
-							{System.out.println(getLine() + " : " + "INTEGER_VALUE" + " => " + getText());};
-BOOLEAN_VALUE			: TRUE
-							{System.out.println(getLine() + " : " + "BOOLEAN_VALUE" + " => " + getText());}
-						| FALSE
-							{System.out.println(getLine() + " : " + "BOOLEAN_VALUE" + " => " + getText());};
+INTEGER_VALUE			: ZERO | NON_ZERO_NUMBER NUMBER*;
+BOOLEAN_VALUE			: TRUE | FALSE;
 
 // Operations
-MATH_OPERATION			: PLUS
-							{System.out.println(getLine() + " : " + "MATH_OPERATION" + " => " + getText());}
-						| MINUS
-							{System.out.println(getLine() + " : " + "MATH_OPERATION" + " => " + getText());}
-						| MULTIPLY
-							{System.out.println(getLine() + " : " + "MATH_OPERATION" + " => " + getText());}
-						| DIVIDE
-							{System.out.println(getLine() + " : " + "MATH_OPERATION" + " => " + getText());};
-COMPARISON_OPERATION	: EQUAL
-							{System.out.println(getLine() + " : " + "COMPARISON_OPERATION" + " => " + getText());}
-						| GRATER_THAN
-							{System.out.println(getLine() + " : " + "COMPARISON_OPERATION" + " => " + getText());}
-						| LESS_THAN
-							{System.out.println(getLine() + " : " + "COMPARISON_OPERATION" + " => " + getText());};
-LOGICAL_OPERATION		: AND
-							{System.out.println(getLine() + " : " + "LOGICAL_OPERATION" + " => " + getText());}
-						| OR
-							{System.out.println(getLine() + " : " + "LOGICAL_OPERATION" + " => " + getText());}
-						| NOT
-							{System.out.println(getLine() + " : " + "LOGICAL_OPERATION" + " => " + getText());};
-ASSIGNMENT				: ASSIGN
-							{System.out.println(getLine() + " : " + "ASSIGNMENT" + " => " + getText());};
+MATH_OPERATION			: PLUS | MINUS | MULTIPLY | DIVIDE;
+COMPARISON_OPERATION	: EQUAL | GRATER_THAN | LESS_THAN;
+LOGICAL_OPERATION		: AND | OR | NOT;
+//ASSIGNMENT				: ASSIGN;
 
 // Statements
-RETURN_STATEMENT		: RETURN
-							{System.out.println(getLine() + " : " + "RETURN_STATEMENT" + " => " + getText());};
-SCOPE					: BEGIN
-							{System.out.println(getLine() + " : " + "SCOPE" + " => " + getText());}
-						| END
-							{System.out.println(getLine() + " : " + "SCOPE" + " => " + getText());};
-BUILTIN_FUNCTION		: BUILTIN_DISPLAY
-							{System.out.println(getLine() + " : " + "BUILTIN_FUNCTION" + " => " + getText());}
-						| BUILTIN_SIZE
-							{System.out.println(getLine() + " : " + "BUILTIN_FUNCTION" + " => " + getText());}
-						| BUILTIN_APPEND
-							{System.out.println(getLine() + " : " + "BUILTIN_FUNCTION" + " => " + getText());};
-CONTROL_STRUCTURE		: IF
-							{System.out.println(getLine() + " : " + "CONTROL_STRUCTURE" + " => " + getText());}
-						| ELSE
-							{System.out.println(getLine() + " : " + "CONTROL_STRUCTURE" + " => " + getText());}
-						| WHILE
-							{System.out.println(getLine() + " : " + "CONTROL_STRUCTURE" + " => " + getText());}
-						| DO
-							{System.out.println(getLine() + " : " + "CONTROL_STRUCTURE" + " => " + getText());};
+//RETURN_STATEMENT		: RETURN ;
+//SCOPE					: BEGIN | END;
+BUILTIN_FUNCTION		: BUILTIN_DISPLAY | BUILTIN_SIZE | BUILTIN_APPEND;
+CONTROL_STRUCTURE		: IF | ELSE | WHILE | DO;
 
 // Methods
-SETTER					: SET
-							{System.out.println(getLine() + " : " + "SETTER" + " => " + getText());};
-GETTER					: GET
-							{System.out.println(getLine() + " : " + "GETTER" + " => " + getText());};
+//SETTER					: SET;
+//GETTER					: GET;
 
 // Primitives
 INT 					: 'int';
@@ -108,8 +57,7 @@ ELSE					: 'else';
 RETURN					: 'return';
 
 // Variable
-IDENTIFIER				: (LETTER | UNDELINE)(LETTER | NUMBER | UNDELINE)*
-							{System.out.println(getLine() + " : " + "IDENTIFIER" + " => " + getText());};
+IDENTIFIER				: (LETTER | UNDELINE)(LETTER | NUMBER | UNDELINE)*;
 
 // Values
 TRUE					: 'true';
@@ -146,6 +94,5 @@ COMMNT_START			: '/*';
 COMMNT_END				: '*/';
 
 // WhiteSpace
-NEW_LINE				: '\r\n'
-							{System.out.println(getLine() + " : " + "NEW_LINE" + " => " + getText());};
+NEW_LINE				: '\r\n';
 WHITE_SPACE				: [ \t] -> skip;
