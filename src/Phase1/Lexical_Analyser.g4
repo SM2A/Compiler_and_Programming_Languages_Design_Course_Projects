@@ -57,7 +57,7 @@ ELSE					: 'else';
 RETURN					: 'return';
 
 // Variable
-IDENTIFIER				: (LETTER | UNDELINE)(LETTER | NUMBER | UNDELINE)*;
+IDENTIFIER				: (LETTER | UNDELINE)(LETTER | NUMBER | UNDELINE)*; // TODO other symbols
 
 // Values
 TRUE					: 'true';
