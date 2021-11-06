@@ -14,7 +14,6 @@ functionCall
 
 argList
     :   OPEN_PARENTHESES (expression ',')* expression CLOSE_PARENTHESES
-    |   OPEN_PARENTHESES (IDENTIFIER'='expression ',')* (IDENTIFIER'='expression) CLOSE_PARENTHESES
     |   OPEN_PARENTHESES CLOSE_PARENTHESES
     ;
 
@@ -37,25 +36,25 @@ argDec
     ;
 
 arg
-    :  FUNCTION_TYPE IDENTIFIER { System.out.println("ArgumentDec : " + $Identifier.getText()); }
+    :  ARG_TYPE IDENTIFIER { System.out.println("ArgumentDec : " + $Identifier.getText()); }
     ;
 
 if_
-    :   IF { System.out.println("Conditional : if"); } expression ':' if_
-    |   IF { System.out.println("Conditional : if"); } expression ':' if_ else_
-    |   IF { System.out.println("Conditional : if"); } expression ':' returnStatement
-    |   IF { System.out.println("Conditional : if"); } expression ':' returnStatement else_
-    |   IF { System.out.println("Conditional : if"); } expression ':' statement
-    |   IF { System.out.println("Conditional : if"); } expression ':' statement else_
-    |   IF { System.out.println("Conditional : if"); } expression ':' BEGIN body END
-    |   IF { System.out.println("Conditional : if"); } expression ':' BEGIN body END else_
+    :   IF { System.out.println("Conditional : if"); } expression BEGIN if_ END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN if_ END else_
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN returnStatement END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN returnStatement else_ END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN statement END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN statement else_ END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN body END
+    |   IF { System.out.println("Conditional : if"); } expression BEGIN body END else_
     ;
 
 else_
-    :   ELSE { System.out.println("Conditional : else"); } ':'  BEGIN body END
-    |   ELSE { System.out.println("Conditional : else"); } ':' returnStatement
-    |   ELSE { System.out.println("Conditional : else"); } ':' if_
-    |   ELSE { System.out.println("Conditional : else"); } ':' statement
+    :   ELSE { System.out.println("Conditional : else"); } BEGIN body END
+    |   ELSE { System.out.println("Conditional : else"); } BEGIN returnStatement END
+    |   ELSE { System.out.println("Conditional : else"); } BEGIN if_ END
+    |   ELSE { System.out.println("Conditional : else"); } BEGIN statement END
     ;
 
 returnStatement
@@ -63,7 +62,7 @@ returnStatement
     ;
 
 return_
-    : RETURN { System.out.println("Return"); } (expression | 'void')
+    : RETURN { System.out.println("Return"); } expression
     ;
 
 statement
@@ -142,15 +141,20 @@ listType
     |   OPEN_BRACKETS CLOSE_BRACKERTS
     ;
 
-
 display
     :   { System.out.println("Built-in : display"); }
         BUILTIN_DISPLAY OPEN_PARENTHESES expression CLOSE_PARENTHESES
     ;
 
+size
+    :   { System.out.println("Size"); }
+        BUILTIN_SIZE OPEN_PARENTHESES expression CLOSE_PARENTHESES
+    ;
 
-
-
+append
+    :   { System.out.println("Append"); }
+        BUILTIN_APPEND OPEN_PARENTHESES expression CLOSE_PARENTHESES
+    ;
 
 
 
@@ -160,7 +164,8 @@ STRUCT_DECLARATION		: 'struct';
 
 // Types
 PRIMITIVE_TYPE			: INT | BOOL | LIST | FUNCTIOR_POINTER;
-FUNCTION_TYPE           : INT | BOOL | LIST | STRUCT_DECLARATION | FUNCTIOR_POINTER;
+ARG_TYPE                : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION;
+FUNCTION_TYPE           : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION | VOID;
 
 // Primitives Values
 INTEGER_VALUE			: ZERO | NON_ZERO_NUMBER NUMBER*;
