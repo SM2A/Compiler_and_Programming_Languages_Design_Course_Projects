@@ -5,9 +5,8 @@ struct House begin
 			area = _area
 			price = 1000 * area
 		end
-		get begin
+		get
 			return area
-		end
 	end
 	struct Room room
 end

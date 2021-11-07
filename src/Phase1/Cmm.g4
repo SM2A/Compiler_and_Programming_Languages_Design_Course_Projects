@@ -57,7 +57,7 @@ expression: OPEN_PARENTHESES expression CLOSE_BRACKERTS
             | expression AND expression {System.out.println("Operator:&&");}
             | expression OR expression {System.out.println("Operator:||");}
             | expression ASSIGN expression {System.out.println("Operator:=");}
-            | INTEGER_VALUE | BOOLEAN_VALUE | IDENTIFIER;
+            | (INTEGER_VALUE | BOOLEAN_VALUE | IDENTIFIER | NULL | OPEN_BRACKETS CLOSE_BRACKERTS); // need to add more
 
 
 
@@ -143,6 +143,7 @@ NON_ZERO_NUMBER			: [1-9];
 LETTER					: UPPERCASE_LETTER | LOWERCASE_LETTER;
 UPPERCASE_LETTER		: [A-Z];
 LOWERCASE_LETTER		: [a-z];
+NULL					: 'null';
 
 // Symbols
 SEMICOLON				: ';';
