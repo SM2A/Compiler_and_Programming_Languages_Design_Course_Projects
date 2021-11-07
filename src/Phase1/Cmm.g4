@@ -4,157 +4,70 @@ cmm
     :  (struct)* (function)* main  EOF
     ;
 
-main
-    :   MAIL_FUNCTION { System.out.println("Main"); } BEGIN (body) END
+struct
+    : STRUCT_DECLARATION IDENTIFIER BEGIN struct_body END
     ;
 
-functionCall
-    :  IDENTIFIER (argList)+
+struct_body
+    : (var_dec | setter_getter)*
     ;
 
-argList
-    :   OPEN_PARENTHESES (expression ',')* expression CLOSE_PARENTHESES
-    |   OPEN_PARENTHESES CLOSE_PARENTHESES
+setter_getter
+    : OPEN_PARENTHESES (VAR_TYPE IDENTIFIER COMMA)* VAR_TYPE IDENTIFIER CLOSE_PARENTHESES BEGIN setter getter END
     ;
 
-function
-    :   funcDec BEGIN body END
+setter
+    : SET BEGIN ((IDENTIFIER ASSIGN expression) SEMICOLON*)* END
     ;
 
-body
-    : (if_ | statement | returnStatement)* returnStatement (if_ | statement | returnStatement)*
-    | (if_ | statement | returnStatement)*
+getter
+    : GET RETURN (IDENTIFIER | expression) END
     ;
 
-funcDec
-    :  FUNCTION_TYPE IDENTIFIER { System.out.println("FunctionDec : " + $IDENTIFIER.getText()); } argDec
+var_dec
+    : (int_bool_dec | list_dec | struct_ins | fptr_dec)*
     ;
 
-argDec
-    :   OPEN_PARENTHESES (arg LIST_SEPERATOR)* arg CLOSE_PARENTHESES
-    |   OPEN_PARENTHESES CLOSE_PARENTHESES
+int_bool_dec
+    : VAR_TYPE IDENTIFIER SEMICOLON*
+    | VAR_TYPE IDENTIFIER ASSIGN (INTEGER_VALUE | BOOLEAN_VALUE) SEMICOLON*
     ;
 
-arg
-    :  ARG_TYPE IDENTIFIER { System.out.println("ArgumentDec : " + $Identifier.getText()); }
+list_dec
+    : LIST NUMBER_SIGN (LIST_TYPE | list_dec) IDENTIFIER SEMICOLON*
     ;
 
-if_
-    :   IF { System.out.println("Conditional : if"); } expression BEGIN if_ END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN if_ END else_
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN returnStatement END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN returnStatement else_ END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN statement END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN statement else_ END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN body END
-    |   IF { System.out.println("Conditional : if"); } expression BEGIN body END else_
+struct_ins
+    : STRUCT_DECLARATION IDENTIFIER IDENTIFIER SEMICOLON*
     ;
 
-else_
-    :   ELSE { System.out.println("Conditional : else"); } BEGIN body END
-    |   ELSE { System.out.println("Conditional : else"); } BEGIN returnStatement END
-    |   ELSE { System.out.println("Conditional : else"); } BEGIN if_ END
-    |   ELSE { System.out.println("Conditional : else"); } BEGIN statement END
-    ;
-
-returnStatement
-    :   return_ SEMICOLON
-    ;
-
-return_
-    : RETURN { System.out.println("Return"); } expression
-    ;
-
-statement
-    : display SEMICOLON
-    | {System.out.println("FunctionCall");} functionCall SEMICOLON
+fptr_dec
+    : FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN IDENTIFIER SEMICOLON*
+    | FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN IDENTIFIER ASSIGN IDENTIFIER SEMICOLON*
     ;
 
 expression
-    :   expression 'or' orExpression { System.out.println("Operator : or"); }
-    |   orExpression
-    ;
-
-orExpression
-    :   orExpression 'and' andExpression { System.out.println("Operator : and"); }
-    |   andExpression
+    :
     ;
 
 
-andExpression
-    :   andExpression 'is' isNotExpression { System.out.println("Operator : is"); }
-    |   andExpression 'not' isNotExpression { System.out.println("Operator : not"); }
-    |   isNotExpression
-    ;
 
-isNotExpression
-    :   isNotExpression '<' ltgtExpression { System.out.println("Operator : <"); }
-    |   isNotExpression '>' ltgtExpression { System.out.println("Operator : >"); }
-    |   ltgtExpression
-    ;
 
-ltgtExpression
-    :   ltgtExpression '+' addSubExpression { System.out.println("Operator : +"); }
-    |   ltgtExpression '-' addSubExpression { System.out.println("Operator : -"); }
-    |   addSubExpression
-    ;
 
-addSubExpression
-    :   addSubExpression '*' mulDivExpression { System.out.println("Operator : *"); }
-    |   addSubExpression '/' mulDivExpression { System.out.println("Operator : /"); }
-    |   mulDivExpression
-    ;
 
-mulDivExpression
-    :   '~' tildaNegOperator { System.out.println("Operator : ~"); }
-    |   '-' tildaNegOperator { System.out.println("Operator : -"); }
-    |   tildaNegOperator
-    ;
 
-tildaNegOperator
-    :   tildaNegOperator '::' concatExpression { System.out.println("Operator : ::"); }
-    |   concatExpression
-    ;
 
-concatExpression
-    :   subscriptExpression { System.out.println("Size"); } '.size'
-    |   subscriptExpression
-    ;
 
-subscriptExpression
-    :   subscriptExpression '[' expression ']'
-    |   factor_ '[' expression ']'
-    |   factor_
-    ;
 
-factor_
-    :   '(' expression ')'
-    |   functionCall
-    |   INT
-    |   BOOL
-    |   IDENTIFIER
-    |   listType
-    ;
 
-listType
-    :   OPEN_BRACKETS ((expression) ',')* (expression) CLOSE_BRACKERTS
-    |   OPEN_BRACKETS CLOSE_BRACKERTS
-    ;
 
-display
-    :   { System.out.println("Built-in : display"); }
-        BUILTIN_DISPLAY OPEN_PARENTHESES expression CLOSE_PARENTHESES
-    ;
 
-size
-    :   { System.out.println("Size"); }
-        BUILTIN_SIZE OPEN_PARENTHESES expression CLOSE_PARENTHESES
-    ;
 
-append
-    :   { System.out.println("Append"); }
-        BUILTIN_APPEND OPEN_PARENTHESES expression CLOSE_PARENTHESES
-    ;
+
+
+
+
+
 
 
 
@@ -166,6 +79,8 @@ STRUCT_DECLARATION		: 'struct';
 PRIMITIVE_TYPE			: INT | BOOL | LIST | FUNCTIOR_POINTER;
 ARG_TYPE                : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION;
 FUNCTION_TYPE           : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION | VOID;
+VAR_TYPE                : INT | BOOL;
+LIST_TYPE               : INT | BOOL | STRUCT_DECLARATION;
 
 // Primitives Values
 INTEGER_VALUE			: ZERO | NON_ZERO_NUMBER NUMBER*;
@@ -233,8 +148,8 @@ LOWERCASE_LETTER		: [a-z];
 SEMICOLON				: ';';
 ASSIGN					: '=';
 ACCESS					: '.';
-LIST_SEPERATOR			: ',';
-LIST_TYPE				: '#';
+COMMA		        	: ',';
+NUMBER_SIGN				: '#';
 AND						: '&';
 OR						: '|';
 NOT						: '~';
