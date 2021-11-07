@@ -46,18 +46,16 @@ fptr_dec
     | FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN IDENTIFIER ASSIGN IDENTIFIER SEMICOLON*
     ;
 
-expression
-    :
-    ;
-
-
-
-
-
-
-
-
-
+expression: OPEN_PARENTHESES expression CLOSE_BRACKERTS
+            | M=(MINUS | NOT) expression {System.out.println("Operator:" + $M.getText());}
+            | expression X=(DIVIDE | MULTIPLY) expression {System.out.println("Operator:" + $X.getText());}
+            | expression Y=(PLUS | MINUS) expression {System.out.println("Operator:" + $Y.getText());}
+            | expression Z=(GRATER_THAN | LESS_THAN) expression {System.out.println("Operator:" + $Z.getText());}
+            | expression F=EQUAL expression {System.out.println("Operator:" + $F.getText());}
+            | expression AND expression {System.out.println("Operator:&&");}
+            | expression OR expression {System.out.println("Operator:||");}
+            | expression ASSIGN expression {System.out.println("Operator:=");}
+            | INTEGER_VALUE | BOOLEAN_VALUE | IDENTIFIER;
 
 
 
@@ -87,9 +85,9 @@ INTEGER_VALUE			: ZERO | NON_ZERO_NUMBER NUMBER*;
 BOOLEAN_VALUE			: TRUE | FALSE;
 
 // Operations
-MATH_OPERATION			: PLUS | MINUS | MULTIPLY | DIVIDE;
-COMPARISON_OPERATION	: EQUAL | GRATER_THAN | LESS_THAN;
-LOGICAL_OPERATION		: AND | OR | NOT;
+//MATH_OPERATION			: PLUS | MINUS | MULTIPLY | DIVIDE;
+//COMPARISON_OPERATION	: EQUAL | GRATER_THAN | LESS_THAN;
+//LOGICAL_OPERATION		: AND | OR | NOT;
 //ASSIGNMENT				: ASSIGN;
 
 // Statements
