@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Compiler" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.antlr.v4.gui.TestRig" />
+    <module name="Compiler" />
+    <option name="PROGRAM_PARAMETERS" value="Phase1.Cmm cmm -gui Src\Phase1\test.cmm" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

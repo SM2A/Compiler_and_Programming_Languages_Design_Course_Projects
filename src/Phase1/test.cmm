@@ -2,11 +2,13 @@ struct House begin
 	int price;
 	int area(int _area) begin
 		set begin
-		area = _area
-		price = 1000 * area
+			area = _area
+			price = 1000 * area
+		end
+		get begin
+			return area
+		end
 	end
-	get
-		return area
 	struct Room room
 end
 

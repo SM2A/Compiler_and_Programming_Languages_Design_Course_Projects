@@ -1,7 +1,7 @@
 grammar Cmm;
 
 cmm
-    :  (struct)* (function)* main  EOF
+    :  (struct)* EOF
     ;
 
 struct
@@ -21,11 +21,11 @@ setter
     ;
 
 getter
-    : GET RETURN (IDENTIFIER | expression) END
+    : GET BEGIN RETURN (IDENTIFIER | expression) END
     ;
 
 var_dec
-    : (int_bool_dec | list_dec | struct_ins | fptr_dec)*
+    : (int_bool_dec | list_dec | struct_ins | fptr_dec)+
     ;
 
 int_bool_dec
@@ -76,11 +76,11 @@ MAIL_FUNCTION 			: 'main()';
 STRUCT_DECLARATION		: 'struct';
 
 // Types
+VAR_TYPE                : INT | BOOL;
+LIST_TYPE               : INT | BOOL | STRUCT_DECLARATION;
 PRIMITIVE_TYPE			: INT | BOOL | LIST | FUNCTIOR_POINTER;
 ARG_TYPE                : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION;
 FUNCTION_TYPE           : INT | BOOL | LIST | FUNCTIOR_POINTER | STRUCT_DECLARATION | VOID;
-VAR_TYPE                : INT | BOOL;
-LIST_TYPE               : INT | BOOL | STRUCT_DECLARATION;
 
 // Primitives Values
 INTEGER_VALUE			: ZERO | NON_ZERO_NUMBER NUMBER*;
