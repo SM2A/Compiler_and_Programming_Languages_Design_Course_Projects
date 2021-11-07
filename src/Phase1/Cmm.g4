@@ -26,30 +26,6 @@ getter
     | GET {System.out.println("Getter");} RETURN (IDENTIFIER | expression)
     ;
 
-var_dec
-    : (int_bool_dec | list_dec | struct_ins | fptr_dec)+
-    ;
-
-int_bool_dec
-    : VAR_TYPE var_dec_name SEMICOLON*
-    | VAR_TYPE var_dec_name ASSIGN (INTEGER_VALUE | BOOLEAN_VALUE) SEMICOLON*
-    ;
-
-list_dec
-    : LIST NUMBER_SIGN (LIST_TYPE | list_dec) var_dec_name SEMICOLON*
-    ;
-
-struct_ins
-    : STRUCT_DECLARATION IDENTIFIER var_dec_name SEMICOLON*
-    ;
-
-fptr_dec
-    : FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name SEMICOLON*
-    | FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name ASSIGN IDENTIFIER SEMICOLON*
-    ;
-
-var_dec_name: IDENTIFIER {System.out.println("VarDec : " + $IDENTIFIER.getText());} ;
-
 expression: OPEN_PARENTHESES expression CLOSE_BRACKERTS
             | M=(MINUS | NOT) expression {System.out.println("Operator:" + $M.getText());}
             | expression X=(DIVIDE | MULTIPLY) expression {System.out.println("Operator:" + $X.getText());}
@@ -84,7 +60,7 @@ arg_dec
 arg: IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());} ;
 
 statement: normal_brace | conditional_statement | loop_statement | return_statement | function_call_statement
-    | display_statement | assignment_statement | size_statement | append_statement;
+    | display_statement | assignment_statement | size_statement | append_statement | var_dec;
 normal_brace: BEGIN statement* END;
 conditional_statement: IF {System.out.println("Conditional:if");} condition statement else_statement? ;
 condition: OPEN_PARENTHESES expression CLOSE_PARENTHESES;
@@ -94,7 +70,7 @@ display_statement: BUILTIN_DISPLAY OPEN_PARENTHESES expression CLOSE_PARENTHESES
 loop_statement: while_statement | do_while_statement;
 while_statement: WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES expression CLOSE_PARENTHESES BEGIN statement* END;
 do_while_statement: DO BEGIN {System.out.println("Loop : do...while");} statement* END WHILE OPEN_PARENTHESES expression CLOSE_PARENTHESES;
-assignment_statement: var_dec {System.out.println("Operator:=");} SEMICOLON*;
+assignment_statement: var_dec SEMICOLON*;
 size_statement
     : BUILTIN_SIZE OPEN_PARENTHESES IDENTIFIER list_element CLOSE_PARENTHESES
     | BUILTIN_SIZE OPEN_PARENTHESES IDENTIFIER CLOSE_PARENTHESES
@@ -105,11 +81,33 @@ append_statement
     | OPEN_PARENTHESES IDENTIFIER COMMA expression CLOSE_PARENTHESES
     ;
 function_call_statement
-    : IDENTIFIER {System.out.println("FunctionCall";} OPEN_PARENTHESES (IDENTIFIER COMMA)* (ARG_TYPE IDENTIFIER) CLOSE_PARENTHESES
-    | IDENTIFIER {System.out.println("FunctionCall";} OPEN_PARENTHESES CLOSE_PARENTHESES
+    : IDENTIFIER {System.out.println("FunctionCall");} OPEN_PARENTHESES (IDENTIFIER COMMA)* (ARG_TYPE IDENTIFIER) CLOSE_PARENTHESES
+    | IDENTIFIER {System.out.println("FunctionCall");} OPEN_PARENTHESES CLOSE_PARENTHESES
     ;
 
+var_dec
+    : (int_bool_dec | list_dec | struct_ins | fptr_dec)+
+    ;
 
+int_bool_dec
+    : VAR_TYPE var_dec_name SEMICOLON*
+    | VAR_TYPE var_dec_name ASSIGN {System.out.println("Operator:=");} (INTEGER_VALUE | BOOLEAN_VALUE) SEMICOLON*
+    ;
+
+list_dec
+    : LIST NUMBER_SIGN (LIST_TYPE | list_dec) var_dec_name SEMICOLON*
+    ;
+
+struct_ins
+    : STRUCT_DECLARATION IDENTIFIER var_dec_name SEMICOLON*
+    ;
+
+fptr_dec
+    : FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name SEMICOLON*
+    | FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name ASSIGN {System.out.println("Operator:=");} IDENTIFIER SEMICOLON*
+    ;
+
+var_dec_name: IDENTIFIER {System.out.println("VarDec : " + $IDENTIFIER.getText());} ;
 
 
 
