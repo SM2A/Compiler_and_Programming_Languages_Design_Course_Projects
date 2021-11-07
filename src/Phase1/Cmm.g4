@@ -89,6 +89,23 @@ var_dec
     : (int_bool_dec | list_dec | struct_ins | fptr_dec)+
     ;
 
+function_type_
+    : (int_bool_dec_ | list_dec_ | struct_ins_ | fptr_dec_)*
+    ;
+
+int_bool_dec_
+    : VAR_TYPE ;
+
+list_dec_
+    : LIST NUMBER_SIGN (LIST_TYPE | list_dec_) ;
+
+struct_ins_
+    : STRUCT_DECLARATION IDENTIFIER ;
+
+fptr_dec_
+    : FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN
+    ;
+
 int_bool_dec
     : VAR_TYPE var_dec_name SEMICOLON*
     | VAR_TYPE var_dec_name ASSIGN {System.out.println("Operator:=");} (INTEGER_VALUE | BOOLEAN_VALUE) SEMICOLON*
@@ -103,14 +120,13 @@ struct_ins
     ;
 
 fptr_dec
-    : FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name SEMICOLON*
-    | FUNCTIOR_POINTER LESS_THAN ( (FUNCTION_TYPE COMMA)* FUNCTION_TYPE ) MINUS GRATER_THAN FUNCTION_TYPE GRATER_THAN var_dec_name ASSIGN {System.out.println("Operator:=");} IDENTIFIER SEMICOLON*
+    : FUNCTIOR_POINTER LESS_THAN ( (function_type_ COMMA)* function_type_ ) MINUS GRATER_THAN function_type_ GRATER_THAN var_dec_name SEMICOLON*
+    | FUNCTIOR_POINTER LESS_THAN ( (function_type_ COMMA)* function_type_ ) MINUS GRATER_THAN function_type_ GRATER_THAN var_dec_name ASSIGN {System.out.println("Operator:=");} IDENTIFIER SEMICOLON*
     ;
 
+
+
 var_dec_name: IDENTIFIER {System.out.println("VarDec : " + $IDENTIFIER.getText());} ;
-
-
-
 
 
 // Declaration
