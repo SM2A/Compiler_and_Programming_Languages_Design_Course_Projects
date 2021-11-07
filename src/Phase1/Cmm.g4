@@ -18,10 +18,12 @@ setter_getter
 
 setter
     : SET BEGIN ((IDENTIFIER ASSIGN expression) SEMICOLON*)* END
+    | SET (IDENTIFIER ASSIGN expression) SEMICOLON*
     ;
 
 getter
     : GET BEGIN RETURN (IDENTIFIER | expression) END
+    | GET RETURN (IDENTIFIER | expression)
     ;
 
 var_dec
