@@ -100,10 +100,10 @@ append_statement		: BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHE
 						| BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHESES IDENTIFIER list_element COMMA
 							expression CLOSE_PARENTHESES list_element* (NEW_LINE | SEMICOLON)+;
 
-function_call_statement	: (IDENTIFIER ASSIGN)? IDENTIFIER /*{System.out.println("FunctionCall");}*/
-							(OPEN_PARENTHESES (function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)*
-                        | (IDENTIFIER ASSIGN)? IDENTIFIER /*{System.out.println("FunctionCall");}*/
-                        	(OPEN_PARENTHESES CLOSE_PARENTHESES)*;
+function_call_statement	: IDENTIFIER /*{System.out.println("FunctionCall");}*/
+							(OPEN_PARENTHESES (function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*
+                        | IDENTIFIER /*{System.out.println("FunctionCall");}*/
+                        	(OPEN_PARENTHESES CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*;
 
 function_call_arg		: IDENTIFIER | expression;
 function_type			: (int_bool_dec_ | list_dec_ | struct_ins_ | fptr_dec_ | VOID);
