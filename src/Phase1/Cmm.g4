@@ -55,7 +55,7 @@ conditional_statement	: IF {System.out.println("Conditional : if");} condition s
        						NEW_LINE* else_statement?;
 
 condition				: OPEN_PARENTHESES expression CLOSE_PARENTHESES NEW_LINE*| expression NEW_LINE*; // BEGIN and END
-else_statement			: ELSE {System.out.println("Conditional:else");} statement;
+else_statement			: ELSE NEW_LINE+ {System.out.println("Conditional:else");} statement;
 return_statement		: RETURN (expression)? (NEW_LINE | SEMICOLON)+ {System.out.println("Return");};
 
 display_statement		: BUILTIN_DISPLAY {System.out.println("Built-in: display");} OPEN_PARENTHESES expression
