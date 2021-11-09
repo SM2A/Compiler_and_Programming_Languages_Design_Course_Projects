@@ -21,7 +21,7 @@ getter					: GET {System.out.println("Getter");} BEGIN NEW_LINE* (expression) EN
 							(expression) (SEMICOLON | NEW_LINE)+;
 
 main 					: (MAIN_FUNCTION | 'main' OPEN_PARENTHESES CLOSE_PARENTHESES) {System.out.println("Main");} BEGIN NEW_LINE* body NEW_LINE* END;
-body					: (var_dec | statement | expression)* | ;
+body					: (var_dec | statement | expression | NEW_LINE)*;
 var_dec					: (int_bool_dec | list_dec | struct_ins | fptr_dec)+;
 function				: function_dec BEGIN NEW_LINE* body NEW_LINE* END NEW_LINE*
 						| function_dec NEW_LINE* body;
@@ -38,8 +38,8 @@ arg_dec					: OPEN_PARENTHESES ((INT | BOOL | arg_list_dec | FUNCTIOR_POINTER
 arg_list_dec			: (LIST NUMBER_SIGN)+ (INT | BOOL | (STRUCT_DECLARATION IDENTIFIER));
 arg						: IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());};
 
-expression				: IDENTIFIER
-						| function_call | display_statement | size_statement | append_statement | return_statement
+expression				: list_item | IDENTIFIER
+                        | function_call | display_statement | size_statement | append_statement | return_statement
 						| OPEN_PARENTHESES expression CLOSE_PARENTHESES
 						| OPEN_BRACKETS expression CLOSE_BRACKERTS
 						| M=(MINUS | NOT) expression {System.out.println("Operator : " + $M.getText());}
@@ -47,7 +47,7 @@ expression				: IDENTIFIER
 						| expression Y=(PLUS | MINUS) expression {System.out.println("Operator : " + $Y.getText());}
 						| expression Z=(GRATER_THAN | LESS_THAN) expression
 							{System.out.println("Operator : " + $Z.getText());}
-						| expression F=EQUAL expression {System.out.println("Operator : " + $F.getText());}
+						| expression EQUAL expression {System.out.println("Operator : ==");}
 						| expression AND expression {System.out.println("Operator : &");}
 						| expression OR expression {System.out.println("Operator : |");}
 						| expression ASSIGN expression //{System.out.println("Operator : =");}
@@ -81,10 +81,10 @@ display_statement		: BUILTIN_DISPLAY {System.out.println("Built-in : display");}
 
 loop_statement			: while_statement | do_while_statement;
 
-while_statement			: WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES expression CLOSE_PARENTHESES
-							BEGIN NEW_LINE* (statement | expression)* NEW_LINE* END NEW_LINE*
-						| WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES expression CLOSE_PARENTHESES
-							NEW_LINE* (statement | expression)? NEW_LINE*;
+while_statement			: WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES? expression CLOSE_PARENTHESES?
+							BEGIN NEW_LINE* (statement | expression | var_dec)* NEW_LINE* END NEW_LINE*
+						| WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES? expression CLOSE_PARENTHESES?
+							NEW_LINE* (statement | expression | var_dec)? NEW_LINE*;
 
 do_while_statement		: DO BEGIN NEW_LINE* {System.out.println("Loop : do...while");} (expression | statement)+ NEW_LINE* END WHILE
 							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*
@@ -92,11 +92,13 @@ do_while_statement		: DO BEGIN NEW_LINE* {System.out.println("Loop : do...while"
 							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*;
 
 
-size_statement			: BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES (list_element | expression)
+size_statement			: BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES (expression | list_element)
 							CLOSE_PARENTHESES*
     					| BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES IDENTIFIER CLOSE_PARENTHESES;
 
-list_element			: OPEN_BRACKETS (INTEGER_VALUE | list_element) CLOSE_BRACKERTS (SEMICOLON | NEW_LINE)*;
+list_item				: IDENTIFIER+ list_element*;
+
+list_element			: OPEN_BRACKETS (INTEGER_VALUE | expression | list_element) CLOSE_BRACKERTS (SEMICOLON | NEW_LINE)*;
 
 append_statement		: BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHESES expression COMMA expression
 							CLOSE_PARENTHESES* list_element* (NEW_LINE | SEMICOLON)+
