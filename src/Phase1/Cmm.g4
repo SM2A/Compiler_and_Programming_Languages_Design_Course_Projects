@@ -1,24 +1,26 @@
 grammar Cmm;
 
-cmm 					: (struct)* (function)* main EOF;
+cmm 					: (struct | NEW_LINE)* (function | NEW_LINE)* main EOF;
 
 struct					: STRUCT_DECLARATION IDENTIFIER {System.out.println("StructDec : " + $IDENTIFIER.getText());}
-							BEGIN NEW_LINE+ struct_body NEW_LINE+ END NEW_LINE+;
+							BEGIN NEW_LINE+ struct_body NEW_LINE+ END NEW_LINE+
+						| STRUCT_DECLARATION IDENTIFIER {System.out.println("StructDec : " + $IDENTIFIER.getText());}
+                          	NEW_LINE+ (var_dec | setter_getter)? NEW_LINE+;
 
 struct_body				: (var_dec | setter_getter)+;
-setter_getter			: arg_dec BEGIN NEW_LINE+ setter getter NEW_LINE* END NEW_LINE*;
+setter_getter			: arg_dec BEGIN NEW_LINE+ setter getter NEW_LINE* END (SEMICOLON | NEW_LINE)*;
 
-setter					: SET {System.out.println("Setter");} BEGIN NEW_LINE* ((IDENTIFIER ASSIGN expression)
+setter					: SET {System.out.println("Setter");} BEGIN NEW_LINE* ((function_call_statement | expression)
 							(NEW_LINE|SEMICOLON)*)* NEW_LINE* END (SEMICOLON | NEW_LINE)+
-						| SET {System.out.println("Setter");} NEW_LINE* (IDENTIFIER ASSIGN expression)
+						| SET {System.out.println("Setter");} NEW_LINE* (function_call_statement | expression)
 							SEMICOLON* (SEMICOLON | NEW_LINE)+;
 
-getter					: GET NEW_LINE+ {System.out.println("Getter");} BEGIN RETURN (IDENTIFIER | expression) END
+getter					: GET {System.out.println("Getter");} BEGIN NEW_LINE* (expression) END
 							(SEMICOLON | NEW_LINE)+
 						| GET NEW_LINE+ {System.out.println("Getter");} RETURN {System.out.println("Return");}
-							(IDENTIFIER | expression) (SEMICOLON | NEW_LINE)+;
+							(expression) (SEMICOLON | NEW_LINE)+;
 
-main 					: MAIN_FUNCTION {System.out.println("Main");} BEGIN NEW_LINE* body NEW_LINE* END;
+main 					: (MAIN_FUNCTION | 'main' OPEN_PARENTHESES CLOSE_PARENTHESES) {System.out.println("Main");} BEGIN NEW_LINE* body NEW_LINE* END;
 body					: (var_dec | statement | expression)* | ;
 var_dec					: (int_bool_dec | list_dec | struct_ins | fptr_dec)+;
 function				: function_dec BEGIN NEW_LINE* body NEW_LINE* END NEW_LINE*
@@ -37,8 +39,9 @@ arg_list_dec			: (LIST NUMBER_SIGN)+ (INT | BOOL | (STRUCT_DECLARATION IDENTIFIE
 arg						: IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());};
 
 expression				: IDENTIFIER
-						| statement
+						| function_call | display_statement | size_statement | append_statement | return_statement
 						| OPEN_PARENTHESES expression CLOSE_PARENTHESES
+						| OPEN_BRACKETS expression CLOSE_BRACKERTS
 						| M=(MINUS | NOT) expression {System.out.println("Operator : " + $M.getText());}
 						| expression X=(DIVIDE | MULTIPLY) expression {System.out.println("Operator : " + $X.getText());}
 						| expression Y=(PLUS | MINUS) expression {System.out.println("Operator : " + $Y.getText());}
@@ -50,24 +53,24 @@ expression				: IDENTIFIER
 						| expression ASSIGN expression //{System.out.println("Operator : =");}
 						| expression ACCESS expression // {System.out.println("Operator : .");}
 						| IDENTIFIER ACCESS (IDENTIFIER list_element?) (ASSIGN expression)?
-						| (INTEGER_VALUE | BOOLEAN_VALUE | IDENTIFIER | NULL | OPEN_BRACKETS CLOSE_BRACKERTS | OPEN_PARENTHESES CLOSE_PARENTHESES) // todo need to add more
-						| (SEMICOLON | NEW_LINE)+;
+						| (INTEGER_VALUE | BOOLEAN_VALUE | IDENTIFIER | NULL | OPEN_BRACKETS CLOSE_BRACKERTS | OPEN_PARENTHESES CLOSE_PARENTHESES)
+						| (SEMICOLON | NEW_LINE)+; // todo need to add more
 
 statement				: conditional_statement | loop_statement | return_statement | function_call_statement
-							| display_statement | size_statement | append_statement ;
+						| function_call | display_statement | size_statement | append_statement ;
 
 conditional_statement	: IF {System.out.println("Conditional : if");} condition statement? NEW_LINE* else_statement?
-       					| IF {System.out.println("Conditional : if");} condition BEGIN statement* END
+       					| IF {System.out.println("Conditional : if");} condition BEGIN NEW_LINE* statement* END
        						NEW_LINE* else_statement?;
 
 condition				: OPEN_PARENTHESES expression CLOSE_PARENTHESES NEW_LINE* | expression NEW_LINE*;
 
-else_statement			: ELSE {System.out.println("Conditional : else");} NEW_LINE* statement? NEW_LINE*
-                        | ELSE {System.out.println("Conditional : else");} BEGIN NEW_LINE* statement* NEW_LINE* END;
+else_statement			: ELSE {System.out.println("Conditional : else");} NEW_LINE* (expression | statement)? NEW_LINE*
+                        | ELSE {System.out.println("Conditional : else");} BEGIN NEW_LINE* (expression | statement)* NEW_LINE* END;
 
-return_statement		: RETURN {System.out.println("Return");} (expression)? (NEW_LINE | SEMICOLON)+;
+return_statement		: RETURN {System.out.println("Return");} expression* (NEW_LINE | SEMICOLON)*;
 
-display_statement		: BUILTIN_DISPLAY {System.out.println("Built-in : display");} OPEN_PARENTHESES expression
+display_statement		: BUILTIN_DISPLAY {System.out.println("Built-in : display");} OPEN_PARENTHESES expression*
 							CLOSE_PARENTHESES (NEW_LINE | SEMICOLON)*
 						| BUILTIN_DISPLAY OPEN_PARENTHESES IDENTIFIER ACCESS IDENTIFIER CLOSE_PARENTHESES
 							(NEW_LINE | SEMICOLON)* {System.out.println("Built-in : display");}
@@ -79,28 +82,33 @@ display_statement		: BUILTIN_DISPLAY {System.out.println("Built-in : display");}
 loop_statement			: while_statement | do_while_statement;
 
 while_statement			: WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES expression CLOSE_PARENTHESES
-							BEGIN NEW_LINE* (statement | expression)* NEW_LINE* END
+							BEGIN NEW_LINE* (statement | expression)* NEW_LINE* END NEW_LINE*
 						| WHILE {System.out.println("Loop : while");} OPEN_PARENTHESES expression CLOSE_PARENTHESES
 							NEW_LINE* (statement | expression)? NEW_LINE*;
 
-do_while_statement		: DO BEGIN NEW_LINE* {System.out.println("Loop : do...while");} expression* NEW_LINE* END WHILE
-							OPEN_PARENTHESES? expression CLOSE_PARENTHESES? NEW_LINE*
-						| DO {System.out.println("Loop : do...while");} NEW_LINE+ expression? WHILE
-							OPEN_PARENTHESES? expression CLOSE_PARENTHESES? NEW_LINE*;
+do_while_statement		: DO BEGIN NEW_LINE* {System.out.println("Loop : do...while");} (expression | statement)+ NEW_LINE* END WHILE
+							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*
+						| DO {System.out.println("Loop : do...while");} NEW_LINE+ (expression | statement)+ WHILE
+							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*;
 
 
-size_statement			: BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES IDENTIFIER list_element
-							CLOSE_PARENTHESES
+size_statement			: BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES (list_element | expression)
+							CLOSE_PARENTHESES*
     					| BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES IDENTIFIER CLOSE_PARENTHESES;
 
 list_element			: OPEN_BRACKETS (INTEGER_VALUE | list_element) CLOSE_BRACKERTS (SEMICOLON | NEW_LINE)*;
 
-append_statement		: BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHESES IDENTIFIER COMMA expression
-							CLOSE_PARENTHESES list_element* (NEW_LINE | SEMICOLON)+
+append_statement		: BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHESES expression COMMA expression
+							CLOSE_PARENTHESES* list_element* (NEW_LINE | SEMICOLON)+
 						| BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHESES IDENTIFIER list_element COMMA
 							expression CLOSE_PARENTHESES list_element* (NEW_LINE | SEMICOLON)+;
 
-function_call_statement	: IDENTIFIER /*{System.out.println("FunctionCall");}*/
+function_call_statement	: IDENTIFIER {System.out.println("FunctionCall");}
+							(OPEN_PARENTHESES (function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*
+                        | IDENTIFIER {System.out.println("FunctionCall");}
+                        	(OPEN_PARENTHESES CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*;
+
+function_call			: IDENTIFIER /*{System.out.println("FunctionCall");}*/
 							(OPEN_PARENTHESES (function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*
                         | IDENTIFIER /*{System.out.println("FunctionCall");}*/
                         	(OPEN_PARENTHESES CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*;
@@ -113,16 +121,17 @@ struct_ins_				: STRUCT_DECLARATION IDENTIFIER ;
 fptr_dec_				: FUNCTIOR_POINTER LESS_THAN ( (function_type COMMA)* (function_type) ) MINUS GRATER_THAN
 							(function_type) GRATER_THAN;
 
-int_bool_dec			: (INT | BOOL) (var_dec_name COMMA)* var_dec_name (NEW_LINE | SEMICOLON)*
-    					| (INT | BOOL) (var_dec_name COMMA)* var_dec_name ASSIGN /*{System.out.println("Operator : =");}?*/
+int_bool_dec			: (INT | BOOL) (var_dec_name (ASSIGN expression)* COMMA)* var_dec_name (NEW_LINE | SEMICOLON)*
+    					| (INT | BOOL) (var_dec_name (ASSIGN expression)* COMMA)* var_dec_name ASSIGN /*{System.out.println("Operator : =");}?*/
     						(expression COMMA)* expression (NEW_LINE | SEMICOLON)+;
 
 list_dec				: (LIST NUMBER_SIGN)+ (INT | BOOL | (STRUCT_DECLARATION IDENTIFIER)) var_dec_name
 							(SEMICOLON | NEW_LINE)*
     					| (LIST NUMBER_SIGN)+ (INT | BOOL | (STRUCT_DECLARATION IDENTIFIER)) var_dec_name ASSIGN
-    						function_call_statement (SEMICOLON | NEW_LINE)*;
+    						function_call (SEMICOLON | NEW_LINE)*;
 
-struct_ins				: STRUCT_DECLARATION IDENTIFIER (var_dec_name COMMA)* var_dec_name SEMICOLON*;
+struct_ins				: STRUCT_DECLARATION IDENTIFIER (var_dec_name COMMA)* var_dec_name (SEMICOLON | NEW_LINE)*
+						| STRUCT_DECLARATION IDENTIFIER (var_dec_name COMMA)* var_dec_name ASSIGN (expression COMMA)* expression (SEMICOLON | NEW_LINE)*;
 
 fptr_dec				: FUNCTIOR_POINTER LESS_THAN ( (function_type COMMA)* function_type ) MINUS GRATER_THAN
 							function_type GRATER_THAN var_dec_name (SEMICOLON | NEW_LINE)*
@@ -205,11 +214,10 @@ CLOSE_PARENTHESES		: ')';
 OPEN_BRACKETS			: '[';
 CLOSE_BRACKERTS 		: ']';
 UNDELINE				: '_';
-COMMNT_START			: '/*';
-COMMNT_END				: '*/';
+//COMMNT_START			: '/*';
+//COMMNT_END				: '*/';
 
 // WhiteSpace
-//NEW_LINE 				: RNL | NL;
-NEW_LINE						: '\n';
-//RNL						: '\r';
+NEW_LINE				: '\n';
 WHITE_SPACE				: [ \r\t] -> skip;
+COMMENT					: '/*' .*? '*/' -> skip;

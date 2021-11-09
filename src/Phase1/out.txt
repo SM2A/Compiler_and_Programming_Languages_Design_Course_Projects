@@ -1,64 +1,117 @@
-StructDec : House
-VarDec : price
-VarDec : area
-ArgumentDec : _area
-Setter
-Operator : *
-Getter
-Return
-VarDec : room
-StructDec : Room
-VarDec : area
-FunctionDec : f1
-ArgumentDec : num
-VarDec : a
-VarDec : i
-Loop : while
-Operator : <
-Append
-Operator : +
-Return
-FunctionDec : f2
-ArgumentDec : num
-VarDec : a
-VarDec : i
-Loop : while
-Operator : <
-Append
-Operator : *
-Operator : +
-Return
-FunctionDec : f3
-ArgumentDec : choice
-ArgumentDec : dummy
-ArgumentDec : h1
-Built-in : display
-Built-in : display
+FunctionDec : ackermann
+ArgumentDec : a
+ArgumentDec : b
 Conditional : if
+Operator : ==
 Return
-Conditional : else
-Return
-Main
-VarDec : functionPointer
-VarDec : h1
-VarDec : h2
-VarDec : h3
-VarDec : h4
-VarDec : r1
-Operator : *
 Operator : +
-Operator : *
+Conditional : if
+Operator : ==
+Return
+Operator : -
+Return
 Operator : -
 Operator : -
-Operator : +
-VarDec : numbers
-VarDec : houses
-VarDec : alley1
-VarDec : alley2
-Append
-Append
-Built-in : display
+FunctionDec : is_inbound
+ArgumentDec : x
+ArgumentDec : y
+ArgumentDec : sizex
+ArgumentDec : sizey
+Return
+Operator : -
+Operator : >
+Operator : -
+Operator : >
+Operator : &
+Operator : <
+Operator : &
+Operator : <
+Operator : &
+FunctionDec : count_neighbours
+ArgumentDec : state
+ArgumentDec : x
+ArgumentDec : y
+VarDec : ysize
 Size
-Append
-Append
-Append
+line 17:26 no viable alternative at input 'intxsize=size(state['
+Size
+line 17:29 extraneous input ')' expecting {'end', '
+'}
+line 18:4 extraneous input 'int' expecting {'end', '
+'}
+line 20:10 no viable alternative at input 'inti='
+line 22:4 extraneous input 'while' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 23:14 no viable alternative at input 'intj='
+line 24:8 extraneous input 'while' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 25:12 extraneous input 'if' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 26:16 extraneous input 'result' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 27:12 extraneous input 'j' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 28:8 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 29:8 extraneous input 'i' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 30:4 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 32:4 extraneous input 'return' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 33:0 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+FunctionDec : next_state
+ArgumentDec : prev
+VarDec : sizey
+Size
+line 38:25 no viable alternative at input 'intsizex=size(prev['
+Size
+line 38:28 extraneous input ')' expecting {'end', '
+'}
+line 40:4 extraneous input 'list' expecting {'end', '
+'}
+line 42:10 no viable alternative at input 'inti='
+line 43:4 extraneous input 'while' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 44:23 no viable alternative at input 'list#intline\n'
+line 45:14 no viable alternative at input 'intj='
+line 46:8 extraneous input 'while' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 47:18 no viable alternative at input 'intn='
+line 48:12 extraneous input 'if' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 49:16 extraneous input 'if' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 50:20 extraneous input 'append' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 51:16 extraneous input 'else' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 52:20 extraneous input 'append' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 53:12 extraneous input 'else' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 54:16 extraneous input 'if' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 55:20 extraneous input 'append' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 56:16 extraneous input 'else' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 57:20 extraneous input 'append' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 59:12 extraneous input 'j' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 60:8 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 61:8 extraneous input 'append' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 62:8 extraneous input 'i' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 63:4 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 65:4 extraneous input 'return' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 66:0 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+Main
+Return
