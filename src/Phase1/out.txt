@@ -6,12 +6,10 @@ ArgumentDec : _id
 Setter
 Getter
 Return
-FunctionDec : f1
-ArgumentDec : arg1
-ArgumentDec : arg1
-ArgumentDec : arg2
-VarDec : ptr1
-Return
+line 11:54 no viable alternative at input 'fptr<int->int>f1(intarg1,boolarg1,list#list#struct'
+line 12:26 no viable alternative at input 'fptr<void->void>ptr1='
+line 13:0 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
 FunctionDec : sample
 Conditional : if
 Operator : *
