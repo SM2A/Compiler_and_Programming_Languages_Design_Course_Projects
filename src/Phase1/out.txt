@@ -1,64 +1,52 @@
-StructDec : House
-VarDec : price
-VarDec : area
-ArgumentDec : _area
+StructDec : Student
+VarDec : hasDegree
+VarDec : isFemale
+VarDec : age
+VarDec : calcGPA
 Setter
-Operator : *
 Getter
 Return
-VarDec : room
-StructDec : Room
-VarDec : area
-FunctionDec : f1
-ArgumentDec : num
-VarDec : a
-VarDec : i
-Loop : while
-Operator : <
-Append
 Operator : +
-Return
-FunctionDec : f2
-ArgumentDec : num
-VarDec : a
-VarDec : i
-Loop : while
-Operator : <
-Append
-Operator : *
-Operator : +
-Return
-FunctionDec : f3
-ArgumentDec : choice
-ArgumentDec : dummy
-ArgumentDec : h1
-Built-in : display
-Built-in : display
+VarDec : x
+FunctionDec : func
+ArgumentDec : i
+ArgumentDec : x
 Conditional : if
-Return
-Conditional : else
-Return
-Main
-VarDec : functionPointer
-VarDec : h1
-VarDec : h2
-VarDec : h3
-VarDec : h4
-VarDec : r1
-Operator : *
-Operator : +
-Operator : *
-Operator : -
-Operator : -
-Operator : +
-VarDec : numbers
-VarDec : houses
-VarDec : alley1
-VarDec : alley2
-Append
-Append
-Built-in : display
 Size
+Operator : ==
+line 15:26 extraneous input '\n' expecting {'end', 'display', 'size', 'append', 'do', 'while', 'if', 'return', IDENTIFIER}
+Loop : while
+Operator : >
+Append
+Operator : -
+Conditional : else
+line 20:19 extraneous input 'while' expecting {INTEGER_VALUE, BOOLEAN_VALUE, 'end', 'display', 'size', 'append', 'return', IDENTIFIER, 'null', ';', '~', '-', '(', '[', '
+'}
+Loop : while
+Size
+Operator : <
+Built-in : display
+Operator : +
+Return
+Operator : *
+Operator : -
+Operator : /
+Operator : +
+line 24:11 extraneous input ';' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+line 25:0 extraneous input 'end' expecting {'main', 'main()', 'struct', 'int', 'bool', 'list', 'void', 'fptr', '
+'}
+Main
+VarDec : myList
+VarDec : s
 Append
 Append
 Append
+Operator : *
+Loop : do...while
+Return
+Operator : +
+Built-in : display
+Operator : |
+Operator : &
+Operator : |

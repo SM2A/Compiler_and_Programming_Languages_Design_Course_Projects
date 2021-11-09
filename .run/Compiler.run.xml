@@ -3,7 +3,7 @@
     <output_file path="$PROJECT_DIR$/src/Phase1/out.txt" is_save="true" />
     <option name="MAIN_CLASS_NAME" value="org.antlr.v4.gui.TestRig" />
     <module name="Compiler" />
-    <option name="PROGRAM_PARAMETERS" value="Phase1.Cmm -gui cmm Src\Phase1\in.cmm" />
+    <option name="PROGRAM_PARAMETERS" value="Phase1.Cmm cmm -gui Src\Phase1\in.cmm" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
