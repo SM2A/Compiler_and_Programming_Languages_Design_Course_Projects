@@ -10,9 +10,9 @@ struct					: STRUCT_DECLARATION IDENTIFIER {System.out.println("StructDec : " + 
 struct_body				: (var_dec | setter_getter)+;
 setter_getter			: arg_dec BEGIN NEW_LINE+ setter getter NEW_LINE* END (SEMICOLON | NEW_LINE)*;
 
-setter					: SET {System.out.println("Setter");} BEGIN NEW_LINE* ((expression)
+setter					: SET {System.out.println("Setter");} BEGIN NEW_LINE* ((function_call_statement | expression)
 							(NEW_LINE|SEMICOLON)*)* NEW_LINE* END (SEMICOLON | NEW_LINE)+
-						| SET {System.out.println("Setter");} NEW_LINE* (expression)
+						| SET {System.out.println("Setter");} NEW_LINE* (function_call_statement | expression)
 							SEMICOLON* (SEMICOLON | NEW_LINE)+;
 
 getter					: GET {System.out.println("Getter");} BEGIN NEW_LINE* (expression) END
@@ -60,13 +60,13 @@ statement				: conditional_statement | loop_statement | return_statement | funct
 						| function_call | display_statement | size_statement | append_statement ;
 
 conditional_statement	: IF {System.out.println("Conditional : if");} condition statement? NEW_LINE* else_statement?
-       					| IF {System.out.println("Conditional : if");} condition BEGIN statement* END
+       					| IF {System.out.println("Conditional : if");} condition BEGIN NEW_LINE* statement* END
        						NEW_LINE* else_statement?;
 
 condition				: OPEN_PARENTHESES expression CLOSE_PARENTHESES NEW_LINE* | expression NEW_LINE*;
 
-else_statement			: ELSE {System.out.println("Conditional : else");} NEW_LINE* statement? NEW_LINE*
-                        | ELSE {System.out.println("Conditional : else");} BEGIN NEW_LINE* expression* NEW_LINE* END;
+else_statement			: ELSE {System.out.println("Conditional : else");} NEW_LINE* (expression | statement)? NEW_LINE*
+                        | ELSE {System.out.println("Conditional : else");} BEGIN NEW_LINE* (expression | statement)* NEW_LINE* END;
 
 return_statement		: RETURN {System.out.println("Return");} expression* (NEW_LINE | SEMICOLON)*;
 
