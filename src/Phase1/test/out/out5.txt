@@ -1,0 +1,94 @@
+StructDec : Student
+VarDec : age
+StructDec : Teacher
+VarDec : level
+VarDec : age
+VarDec : salary
+VarDec : id
+VarDec : numberOfStudent
+VarDec : isGood
+StructDec : Coach
+VarDec : salary
+ArgumentDec : level
+Setter
+Operator : *
+Getter
+VarDec : age
+VarDec : boolean
+VarDec : bold
+StructDec : Coach
+VarDec : age
+VarDec : bonus
+VarDec : happiness
+VarDec : isGood
+VarDec : middle
+ArgumentDec : n
+ArgumentDec : m
+Setter
+Operator : +
+VarDec : a
+Getter
+Operator : /
+VarDec : pointer
+FunctionDec : function
+ArgumentDec : a
+ArgumentDec : f
+VarDec : a
+Size
+Append
+Built-in : display
+VarDec : isPresent
+VarDec : b
+VarDec : f1
+VarDec : g
+FunctionCall
+FunctionCall
+VarDec : g
+VarDec : ali
+VarDec : zahra
+Operator : *
+FunctionDec : function
+ArgumentDec : a
+ArgumentDec : b
+Conditional : if
+Operator : ==
+Conditional : if
+Operator : >
+Conditional : else
+VarDec : declare
+FunctionCall
+Conditional : if
+Operator : >
+VarDec : a
+FunctionDec : function
+ArgumentDec : a
+ArgumentDec : b
+Loop : while
+Operator : ==
+FunctionCall
+VarDec : me
+VarDec : a
+Loop : do...while
+FunctionCall
+Operator : ==
+VarDec : f
+VarDec : sample
+Loop : do...while
+Conditional : if
+Operator : ==
+Conditional : else
+FunctionCall
+Operator : ==
+Loop : do...while
+FunctionCall
+Operator : ==
+VarDec : girl
+Main
+VarDec : inMain
+Size
+Operator : +
+Built-in : display
+Built-in : display
+Size
+Operator : *
+Operator : +

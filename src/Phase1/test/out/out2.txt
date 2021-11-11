@@ -1,0 +1,41 @@
+StructDec : S1
+VarDec : var1
+VarDec : var2
+VarDec : id
+ArgumentDec : _id
+Setter
+Getter
+Return
+FunctionDec : f1
+ArgumentDec : arg1
+ArgumentDec : arg1
+ArgumentDec : arg2
+VarDec : ptr1
+Return
+FunctionDec : sample
+Conditional : if
+Operator : *
+Operator : /
+Operator : +
+Operator : |
+Conditional : if
+Operator : &
+Operator : ~
+Return
+Append
+Operator : *
+Operator : /
+Conditional : else
+Return
+Size
+Operator : -
+Operator : +
+Operator : -
+Main
+FunctionCall
+Loop : do...while
+Operator : +
+Operator : -
+Operator : <
+Operator : >
+Operator : &

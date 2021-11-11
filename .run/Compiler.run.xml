@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Compiler" type="Application" factoryName="Application">
+    <output_file path="$PROJECT_DIR$/src/Phase1/test/out/out1.txt" is_save="true" />
+    <option name="MAIN_CLASS_NAME" value="org.antlr.v4.gui.TestRig" />
+    <module name="Compiler" />
+    <option name="PROGRAM_PARAMETERS" value="Phase1.Cmm cmm Src\Phase1\test\in\in1.cmm" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler2" run_configuration_type="Application" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler3" run_configuration_type="Application" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler4" run_configuration_type="Application" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler5" run_configuration_type="Application" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler6" run_configuration_type="Application" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Compiler7" run_configuration_type="Application" />
+    </method>
+  </configuration>
+</component>
