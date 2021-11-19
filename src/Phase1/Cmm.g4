@@ -25,7 +25,7 @@ getter					: GET {System.out.println("Getter");} BEGIN NEW_LINE*
 scope_body				: statement | expression | var_dec | NEW_LINE | SEMICOLON;
 
 main 					: (MAIN_FUNCTION OPEN_PARENTHESES CLOSE_PARENTHESES) {System.out.println("Main");}
-							BEGIN NEW_LINE* body NEW_LINE* END;
+							BEGIN NEW_LINE* body NEW_LINE* END NEW_LINE*;
 
 body					: (var_dec | statement | expression | NEW_LINE)*;
 var_dec					: (int_bool_dec | list_dec | struct_ins | fptr_dec)+;
@@ -93,10 +93,10 @@ while_statement			: WHILE {System.out.println("Loop : while");} NEW_LINE*
 
 do_while_statement		: DO BEGIN NEW_LINE* {System.out.println("Loop : do...while");}
 							(statement | expression | var_dec)+ NEW_LINE* END NEW_LINE* WHILE
-							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*
+							OPEN_PARENTHESES? expression CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*
 						| DO {System.out.println("Loop : do...while");} NEW_LINE+
 							(statement | expression | var_dec)+ NEW_LINE* WHILE
-							OPEN_PARENTHESES? expression* CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*;
+							OPEN_PARENTHESES? expression CLOSE_PARENTHESES? (SEMICOLON | NEW_LINE)*;
 
 size_statement			: BUILTIN_SIZE {System.out.println("Size");} OPEN_PARENTHESES (expression | list_element)
 							CLOSE_PARENTHESES*
@@ -113,9 +113,9 @@ append_statement		: BUILTIN_APPEND {System.out.println("Append");} OPEN_PARENTHE
 							expression CLOSE_PARENTHESES list_element* (NEW_LINE | SEMICOLON)+;
 
 function_call_statement	: IDENTIFIER {System.out.println("FunctionCall");}(OPEN_PARENTHESES
-							(function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*
+							(function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)+ (NEW_LINE | SEMICOLON)*
                         | IDENTIFIER {System.out.println("FunctionCall");}
-                        	(OPEN_PARENTHESES CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*;
+                        	(OPEN_PARENTHESES CLOSE_PARENTHESES) (NEW_LINE | SEMICOLON)*;
 
 function_call			: IDENTIFIER /*{System.out.println("FunctionCall");}*/ (OPEN_PARENTHESES
 							(function_call_arg COMMA)* (function_call_arg) CLOSE_PARENTHESES)* (NEW_LINE | SEMICOLON)*
