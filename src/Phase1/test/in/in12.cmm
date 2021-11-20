@@ -1,0 +1,65 @@
+struct st1 begin
+    int calc(int a,bool b,struct st1 c,list#int d,fptr<void -> void> e) begin
+            set begin
+                display(1)
+                if a
+                    return 1
+                if b
+                    return 2
+                else
+                    return 3
+                if b begin
+                    return 2
+                end
+                else begin
+                    return 3
+                end
+                while b
+                    return 5
+                while d begin
+                return 1
+                end
+                do
+                    return 1
+                    while a
+                f()
+                return 1
+                a = 1
+               size(1)
+               append(1, 2)
+            end
+            get begin
+                display(1)
+                if a
+                    return 1
+                if b
+                    return 2
+                else
+                    return 3
+                if b begin
+                    return 2
+                end
+                else begin
+                    return 3
+                end
+                while b
+                    return 5
+                while d begin
+                return 1
+                end
+                do
+                    return 1
+                    while a
+                f()
+                return 1
+                a = 1
+               size(1)
+               append(1, 2)
+            end
+        end
+end
+
+main()begin
+
+    append(houses[1], h4)
+end

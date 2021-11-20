@@ -1,0 +1,6 @@
+Main
+VarDec : fptr1
+VarDec : var
+VarDec : arg1
+VarDec : arg2
+VarDec : fp

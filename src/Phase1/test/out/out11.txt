@@ -1,0 +1,590 @@
+import { SelectorAction } from '@fanoos/components/dist/types/components/selector/selector-interfaces';
+import {
+    DataSourceMetadata,
+    DataSourceMetadataProvider,
+} from '@fanoos/core';
+import { querySelectorAllDeep, querySelectorDeep } from 'query-selector-shadow-dom';
+import { isObservable, Observable } from 'rxjs';
+import { isElementDisabled, isElementReadonly, pressEnterOnElement } from '..';
+import { Element } from '../Element';
+import { Shell } from "../Shell";
+
+import { wrapT, getValidationErrorsRaw, normalize } from "../utils";
+import { callOnSubject, Value } from '../Value';
+
+const isMetaDataProvider = (x: DataSourceMetadata | DataSourceMetadataProvider | Observable<DataSourceMetadata>): x is DataSourceMetadataProvider => {
+    return (x && x["metadata"] !== undefined)
+}
+
+const loadAllSelectorData = async (fselector: HTMLFSelectorElement) => {
+    if (fselector.dataSource && (fselector.dataSource as any).changeRecordPerPage) {
+        try {
+            await (fselector.dataSource as any).changeRecordPerPage(1000)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+export class Selector extends Element<JQuery<HTMLElement>> {
+    constructor(root: Cypress.Chainable<JQuery<HTMLElement>> | string) {
+        super(root, "Selector");
+    }
+
+    /** @internal */
+    getCoreElement() {
+        return this.get().then(x => {
+            const elem = x[0]
+            if (elem.nodeName === "F-SELECTOR")
+                return x as JQuery<HTMLFSelectorElement>
+
+            else {
+                const subElem = querySelectorDeep('f-selector', elem)
+                return Cypress.$(subElem)
+            }
+        })
+    }
+
+    /**
+     * @deprecated Use `value` instead.
+     */
+    private select(text: string) {
+        this.value(text);
+    }
+
+    private value(text: string) {
+        return this.getCoreElement()
+            .scrollIntoView()
+            .then({ timeout: 6000 }, jq => {
+                const selector = jq[0];
+                selector.eagerFetch = true;
+                selector.value = text;
+                cy.await();
+            });
+    }
+
+    private _search(text: string) {
+        cy.await()
+        this.getCoreElement().closest("f-selector").then(x => {
+            const isOpened= querySelectorDeep("f-selector-drop-down", x[0])
+            if (isOpened) {
+                this.openDropDown()
+             }
+            })
+            
+            cy.await()
+            this.getCoreElement().then({ timeout: 6000 },
+            jq => {
+                const selector = jq[0];
+                selector.eagerFetch = true;
+                const input=querySelectorDeep("input",selector)
+                return input
+            }).clear({force:true}).type(text,{force:true})
+            cy.wait(1000)
+   
+    } 
+
+    search(text: string | Value<string>) {
+        callOnSubject((text) => {
+            this.announceCommand(`Search for "${text}"`);
+            return this._search(text)
+        }, text)
+    }
+
+    writeText(text: string | Value<string>) {
+        const callback = (text) => {
+            this.announceCommand(`Writing Text ${text} into the selector`)
+            this.getCoreElement()
+                .then({ timeout: 6000 }, jq => {
+                    const selector = jq[0];
+                    selector.value = text;
+                })
+                .await();
+        }
+        callOnSubject(callback, text)
+    }
+
+    private _selectFirstByQuery(querySearch: string) {
+        const [columnName, value] = querySearch.split("=");
+        this.getCoreElement().find(".picker-handle").click({ force: true })
+        cy.await()
+        this.getCoreElement().then(async jq => {
+            const elem = jq[0];
+            if (elem.metadata || (elem.dataSource as any).metadata) {
+                const metaData = await new Promise<DataSourceMetadata>((res, _) => {
+                    this._metadata(elem).then(meta => res(meta))
+                })
+
+                const targetColumn = metaData.columns.find(x => x.title === columnName);
+                if (!targetColumn || !targetColumn.name) {
+                    throw `Column '${columnName}' not found in the selector.`
+                }
+                const valueMember = elem.valueMember ? elem.valueMember : metaData.valueMember;
+                if (!valueMember) {
+                    throw `Could not find value-member from selector's metadata.`
+                }
+                await loadAllSelectorData(elem);
+                const items = await new Promise<any[]>((res, _) => {
+                    this._originalItems(elem).then(x => res(x))
+                });
+                const normalizedValue = normalize(value)
+                console.log(items, "items")
+                const targetItem = items.find(x => normalize(x[targetColumn.name]) == normalizedValue);
+                if (!targetItem) {
+                    throw `Could not find item with condition '${querySearch}'.`
+                }
+                elem.eagerFetch = true;
+                if (elem.multiple)
+                    elem.value = [targetItem[valueMember]]
+                else
+                    elem.value = targetItem[valueMember]
+            } else {
+                throw `Can not query-select selectors that do not have their metadata attached to them.`
+            }
+        })
+
+        cy.await()
+    }
+
+    private _selectFirstByDropdown(searchText: string) {
+        if (searchText)
+            this.search(searchText);
+        cy.await()
+        const dropDown = this.get().closest('body')
+            .find('f-selector-drop-down')
+            .await()
+            .then(x => {
+                if (!x[0].shadowRoot.querySelector('.data-row .data-value')) {
+                    throw new Error(`A value must exist for the searched term '${searchText}' in the opened drop-down/selector.`);
+                }
+            })
+
+        this.get().closest('body')
+            .find('f-selector-drop-down')
+            .then(x => {
+                const elems = [...x[0].shadowRoot.querySelectorAll('.data-row')] as HTMLElement[];
+                const exactItem = elems.find(x => x.getAttribute('data-e2e') === 'exact')
+                if (exactItem) {
+                    exactItem.click()
+                } else {
+                    elems[0].click();
+                }
+            })
+
+        cy.await();
+    }
+
+    selectFirst(searchText?: string | Value<string>) {
+        const callback = (searchText) => {
+            this.announceCommand(`Select First ${searchText}`);
+            if (searchText.includes('='))
+                this._selectFirstByQuery(searchText)
+            else
+                this._selectFirstByDropdown(searchText)
+        }
+        callOnSubject(callback, searchText)
+    }
+
+    /** @internal */
+    selectSearchConditionSelector(condition: string | Value<string>) {
+        const callback = (condition) => this.getCoreElement().then(x => {
+            const elem = x[0];
+            if (Array.isArray(elem.dataSource)) {
+                const validValues = elem.dataSource.map(x => x.id);
+                if (validValues.includes(condition)) {
+                    x[0].value = condition;
+                } else {
+                    throw `Condition '${condition}' is not valid for this filter condition selector.`
+                }
+            } else {
+                throw `Setting filter selectors with non-array datasource is not supported yet.`
+            }
+        })
+        callOnSubject(callback, condition)
+        cy.await()
+    }
+
+    clear() {
+        this.announceCommand("Clear");
+        this.getCoreElement()
+            .await()
+            .then(x => x[0].value = undefined)
+            .await()
+    }
+
+    clickToolbarAction(commandTitle: string | Value<string>) {//TODO no documentation for this command on srv-devperf
+        const callback = (commandTitle) => {
+            this.announceCommand(`Click '${commandTitle}' on selector toolbar`)
+            this.getCoreElement()
+                .await()
+                .then(x => {
+                    const toolbarActions = x[0].actionProvider.toolbarActions as SelectorAction[]
+                    if (!toolbarActions) {
+                        throw new Error(`There were no toolbar actions attached on the selector. Couldn't invoke action '${commandTitle}'.`)
+                    }
+                    const actionItem = toolbarActions.find(x => x.title === commandTitle)
+                    if (actionItem) {
+                        actionItem.action()
+                    } else {
+                        throw new Error(`Couldn't invoke action '${commandTitle}' on the selector, because it was not found.`)
+                    }
+                })
+                .await()
+        }
+        callOnSubject(callback, commandTitle)
+    }
+
+    private callSelectedRecordAction(commandTitle?: string, noSelectedRecordMsg?: string, commandTitleMismtachMsg?: string) {
+        this.getCoreElement()
+            .await()
+            .then(x => {
+                const actionItem = x[0].actionProvider.selectedRecordAction as SelectorAction
+                if (!actionItem) {
+                    const msg = noSelectedRecordMsg ? noSelectedRecordMsg : `There were no actions attached for the selected item in the selector. Couldn't invoke action '${commandTitle}'.`;
+                    throw new Error(msg)
+                }
+
+                if (actionItem.title === commandTitle) {
+                    actionItem.action()
+                } else {
+                    const msg = commandTitleMismtachMsg ? commandTitleMismtachMsg : `Couldn't invoke action '${commandTitle}' on the selector, because it was not found in the selected record actions.`
+                    throw new Error(msg)
+                }
+            })
+            .await()
+    }
+
+    viewItem() {
+        this.announceCommand("Viewing selector item")
+        this.callSelectedRecordAction('مشاهده', "")
+    }
+
+    private _metadata(fselector: HTMLFSelectorElement) {
+
+        const x = fselector;
+        const p = Cypress.$.Deferred<DataSourceMetadata>();
+        const metaData = x.metadata ? x.metadata : (x.dataSource as any).metadata as Observable<DataSourceMetadata>;
+        if (isMetaDataProvider(metaData)) {
+            metaData.metadata.subscribe(meta => p.resolve(meta))
+        } else if (isObservable(metaData)) {
+            metaData.subscribe(meta => p.resolve(meta))
+
+        } else {
+            p.resolve(metaData)
+        }
+        return p
+    }
+
+
+    private _originalItems(fselector: HTMLFSelectorElement) {
+        const p = Cypress.$.Deferred<any[]>();
+        const ds = fselector.dataSource;
+
+        if (Array.isArray(ds)) {
+            p.resolve(ds)
+        } else {
+            ds.syncData();
+            const data = (fselector as any)._data;
+            if (Array.isArray(data)) {
+                p.resolve(data)
+            }
+            else {
+                throw new Error("Could not get items of selector, because `selector._data` wasn't an Array.")
+            }
+        }
+        return p
+    }
+
+    private _extractDisplayMember(elem: HTMLFSelectorElement) {
+        const extractDataFromDisplayMember = (displayMember: string | ((data: any) => string)) => {
+            if (typeof displayMember === "string")
+                return displayMember
+            else
+                return displayMember(undefined)
+        }
+        const displayMember = Cypress.$.Deferred<string>()
+        if (elem.metadata || (elem.dataSource as any).metadata)
+            this._metadata(elem).then(meta => displayMember.resolve(extractDataFromDisplayMember(meta.displayMember)))
+        else
+            displayMember.resolve(extractDataFromDisplayMember(elem.displayMember))
+        return displayMember
+    }
+
+    private _extractColumnFromMetadata(elem: HTMLFSelectorElement, title: string) {
+        title = normalize(title)
+        const extractNameFromColumn = (columns) => {
+            return columns.find(c => c.title === title)
+        }
+        const column = Cypress.$.Deferred<{ name: string, title: string }>()
+        if (elem.metadata || (elem.dataSource as any).metadata)
+            this._metadata(elem).then(meta => column.resolve(extractNameFromColumn(meta.columns))).then(console.log)
+        else
+            throw new Error("This element doesn't have metadata")
+        return column
+    }
+
+    private _items() {
+        this.getCoreElement().find(".picker-handle").click({ force: true })
+        return this.getCoreElement()
+            .then(x => {
+                const p = Cypress.$.Deferred<string[]>();
+                const elem = x[0]
+                this._extractDisplayMember(elem).then(displayMember => {
+                    this._originalItems(elem).then(oi => {
+                        p.resolve(oi.map(x => x[displayMember]))
+                    })
+                })
+
+                return p
+            })
+    }
+
+    items() {
+        this.announceCommand("Get all items");
+        return new Value(this._items());
+    }
+
+    first() {
+        this.announceCommand("Get first item");
+        return new Value(this._items().then(x => {
+            if (x.length > 0)
+                return x[0]
+
+            throw new Error("Could not get the first item of the list. There was no item in the selector items.")
+        }))
+    }
+
+    last() {
+        this.announceCommand("Get last item")
+        return new Value(this._items().then(x => {
+            return this._items().then(x => {
+                if (x.length > 0)
+                    return x[x.length - 1]
+                throw new Error("Could not get the last item of the list. There was no item in the selector items.")
+            })
+        }))
+    }
+
+    count() {
+        this.announceCommand("Get items count")
+        return new Value(this._items().then(x => x.length))
+    }
+
+    indexOf(item: string | Value<string>) {
+        this.announceCommand(`Get index of '${item}'`)
+        if (item instanceof Value)
+            return new Value(item.get().then((item) => this._items().then(x => x.indexOf(item))))
+        else
+            return new Value(this._items().then(x => x.indexOf(item)))
+    }
+
+    at(index: number) {
+        this.announceCommand(`Get item at index '${index}'`);
+        return new Value(this._items().then(x => {
+            const val = x[index];
+            if (val)
+                return val;
+
+            throw new Error(`Could not find item at index ${index} of selector. Total items count: ${x.length}, items: ${x}`)
+        }))
+    }
+
+    check(query: string | Value<string>) {
+
+        this.openDropDown().then(dropDown => {
+            const expandAllItems = () => {
+                const moreItems = querySelectorDeep("f-button[title='بارگذاری داده‌های بیشتر']", dropDown[0]) as HTMLFButtonElement
+                if (moreItems) {
+                    moreItems.click()
+                    cy.await()
+                    cy.then(() => {
+                        if (!moreItems.hasAttribute("disabled"))
+                            expandAllItems()
+                    })
+                }
+            }
+            expandAllItems()
+        })
+
+        cy.await()
+        const callback = (query) => this.getCoreElement().then(elem => {
+            this.announceCommand(`Check ${query}`)
+            const check = (displayMember, title) => this.openDropDown().then(async (dropDown) => {
+                title = normalize(title)
+                const rows = [...querySelectorAllDeep("span.data-row", dropDown[0])] as HTMLSpanElement[]
+
+                const candidate = rows.filter((row) => {
+                    const targetSpan = row.querySelector(`span[data-e2e-name='${displayMember}']`)
+
+                    if (targetSpan) {
+
+                        return normalize(targetSpan.textContent) === title
+                    }
+                })[0] as HTMLElement
+
+                if (!candidate)
+                    throw new Error("This item doesn't exist on this selector.")
+                if (!candidate.classList.contains("selected"))
+                    wrapT(candidate).find("f-checkbox").click({ force: true })
+
+            })
+            const p = Cypress.$.Deferred();
+            if (!elem[0].multiple) {
+                throw new Error(`Selecting items is only available on multiple combo-boxes. Could not select item '${query}' in the selector.`)
+            }
+
+            const fselector = elem[0];
+
+            if (!Array.isArray(fselector.dataSource)) {
+                fselector.dataSource.syncData()
+                fselector.dataSource.refresh()
+            }
+            if (query.includes("=")) {
+                const [name, title] = query.split("=").map(normalize)
+                this._extractColumnFromMetadata(fselector, name).then((column) => {
+                    if (!column)
+                        throw new Error(`Title ${title} does not exist on columns of this selector.`)
+                    check(column.name, title)
+                    p.resolve()
+                })
+
+            } else {
+                this._extractDisplayMember(fselector).then(displayMember => {
+                    const title = normalize(query)
+                    check(displayMember, title)
+                    p.resolve()
+                })
+            }
+            return p
+        })
+        callOnSubject(callback, query)
+        return this
+    }
+
+    private openDropDown() {
+        this.getCoreElement().find('.picker-handle').click({force:true}) // Opens dropdown
+        cy.await()
+        return Shell.getOpenedPage().get().then((x) => {
+            const dropDown = querySelectorDeep("f-selector-drop-down", x[0])
+            if (!dropDown)
+                throw new Error("Tried to open this selector but could not open it.")
+            return dropDown
+        })
+    }
+
+    uncheck(title: string) {
+        this.announceCommand(`Uncheck ${title}`)
+        title = normalize(title)
+        this.getCoreElement().then(elem => {
+
+            const p = Cypress.$.Deferred();
+            if (!elem[0].multiple) {
+                throw new Error(`Deselecting items is only available on multiple combo-boxes. Could not select item '${title}' in the selector.`)
+            }
+
+            const fselector = elem[0];
+
+            if (!Array.isArray(fselector.dataSource)) {
+                fselector.dataSource.syncData()
+                fselector.dataSource.refresh()
+            }
+
+            this._extractDisplayMember(fselector).then(displayMember => {
+                this.openDropDown().then((dropDown) => {
+                    const rows = [...querySelectorAllDeep("span.data-row", dropDown[0])]
+                    const candidate = rows.filter((row) =>
+                        querySelectorDeep(`span[data-e2e-name='${displayMember}']`, row).textContent === title)[0] as HTMLElement
+                    if (!candidate)
+                        throw new Error("This item doesn't exist on this selector.")
+                    if (candidate.classList.contains("selected"))
+                        wrapT(candidate).find("f-checkbox").click({ force: true })
+                })
+                //this.getCoreElement().then(x => x[0].search(""))
+                p.resolve()
+                /*this._originalItems(fselector).then(items => {
+                    const target = items.find(x => x[displayMember] === title)
+                    if (target) {
+                        if (fselector.selectedObject)
+                            (fselector.selectedObject as any[]).push(target)
+                        else
+                            fselector.selectedObject = [target]
+                        p.resolve()
+                    } else {
+                        throw new Error(`Could not select item '${title}' in the selector, because it did not exist.`)
+                    }
+                })*/
+            })
+
+            return p
+        })
+        return this
+    }
+
+    selectAll() {
+        this.announceCommand(`Select All`)
+        this.getCoreElement().then(elem => {
+            const p = Cypress.$.Deferred();
+            if (!elem[0].multiple) {
+                throw new Error(`Selecting items is only available on multiple combo-boxes. Could not select all items in the selector.`)
+            }
+
+            const fselector = elem[0];
+
+            if (!Array.isArray(fselector.dataSource)) {
+                fselector.dataSource.syncData()
+                fselector.dataSource.refresh()
+            }
+
+            fselector.selectAll().then(p.resolve).catch(p.reject)
+
+            return p
+        })
+    }
+
+    assertSelected() {
+        this.getCoreElement().then($s => {
+            const selector = $s[0] as any;
+            var sel = selector.selectedObject;
+            assert.isNotEmpty(sel, 'Expected selector to have a selected item, but no item was selected.');
+        });
+    }
+
+    getFirstValidationError() {
+        this.announceCommand(`Get first validation error`);
+        return new Value(this.getCoreElement().then(x => getValidationErrorsRaw(x[0])).then(errors => {
+            if (errors.length === 0)
+                return ""
+            else
+                return errors[0]
+        }))
+    }
+
+    isEnabled() {
+        this.announceCommand(`Is enabled?`)
+        const isEnabled = this.getCoreElement().then(jEl => {
+            const selector = jEl[0];
+            return !isElementDisabled(selector)
+        })
+        return new Value(isEnabled);
+    }
+
+    isReadonly() {
+        this.announceCommand(`Is readonly?`)
+        const isReadonly = this.getCoreElement().then(jEl => {
+            const elem = jEl[0];
+            return isElementReadonly(elem)
+        })
+        return new Value(isReadonly);
+    }
+
+    pressEnter() {
+        this.announceCommand('Press Enter');
+        this.getCoreElement().then(x => {
+            const txt = x[0];
+
+            pressEnterOnElement(txt)
+        })
+
+        cy.await()
+    }
+}

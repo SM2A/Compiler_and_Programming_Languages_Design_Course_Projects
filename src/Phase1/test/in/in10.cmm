@@ -1,0 +1,5 @@
+main() begin
+   fptr <list#int -> void> fptr1
+   list #fptr<struct s, list#int, list #struct t -> void> var
+   fptr <list #list #list #fptr <list#bool -> list#bool> -> void> arg1, arg2, fp
+end

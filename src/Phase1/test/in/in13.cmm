@@ -1,0 +1,35 @@
+int f1 (int a1, int a2, int a3, int a4, int a5)  begin
+    f2(a6 = a5, a7 = 0);
+    display(a1 + a2 * (1 - 2 + 3) & ture );
+    display(a4(5));
+    return f3(11) + 1400;
+    f4()();
+    display(f5()[0]);
+
+    return true;
+end
+
+bool f2(int a6 , int a7)  begin
+    if a7 > size(a6) - 1
+        return f2;
+    display(a6[a7]);
+    f2 (a6, a7 + 1);
+    return f3;
+end
+
+void f3(int a9)
+    if a9 == 91
+        return 1;
+    else 
+        return 2;
+
+int f4()
+    return a = 1
+
+int f5()
+    f4();
+
+
+main() begin
+  display(f1(1, 2, true));
+end

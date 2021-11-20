@@ -1,0 +1,74 @@
+StructDec : s1__
+VarDec : myvar
+ArgumentDec : arg1
+ArgumentDec : arg2
+Setter
+Operator : *
+Operator : *
+Operator : +
+Built-in : display
+Operator : *
+Operator : >
+VarDec : a
+Operator : *
+Operator : +
+VarDec : b
+Operator : /
+Getter
+Return
+Size
+StructDec : s2
+VarDec : a
+Size
+Append
+Size
+Operator : *
+Operator : +
+VarDec : t
+VarDec : tp
+Operator : /
+Operator : ==
+VarDec : newVar
+Setter
+Built-in : display
+Operator : &
+Getter
+Return
+VarDec : d
+Setter
+Operator : *
+Operator : <
+Operator : ==
+Getter
+Built-in : display
+Built-in : display
+Size
+Return
+VarDec : t
+FunctionDec : jlist
+ArgumentDec : arg1
+ArgumentDec : h
+Append
+Operator : -
+Operator : *
+Operator : -
+Operator : *
+FunctionDec : func2
+Built-in : display
+Operator : ~
+Operator : /
+FunctionDec : lastFunc
+Operator : *
+Operator : +
+Operator : -
+Operator : /
+Operator : *
+Operator : -
+Main
+Return
+Operator : *
+Operator : +
+Operator : *
+Operator : &
+Operator : |
+Operator : -

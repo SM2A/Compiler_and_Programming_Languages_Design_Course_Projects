@@ -1,0 +1,83 @@
+StructDec : S
+VarDec : x
+Operator : *
+Operator : /
+Operator : +
+VarDec : y
+VarDec : myList
+VarDec : check
+VarDec : isFull
+VarDec : capacity
+VarDec : ssize
+VarDec : calc
+ArgumentDec : _capacity
+ArgumentDec : _isFull
+Setter
+Operator : *
+FunctionCall
+Getter
+Return
+Size
+Append
+Operator : *
+Operator : /
+Operator : -
+VarDec : LL
+StructDec : v
+VarDec : value
+VarDec : v
+StructDec : c
+VarDec : val
+Operator : *
+Operator : +
+Operator : *
+Operator : /
+Operator : -
+Operator : -
+Operator : &
+Operator : |
+FunctionDec : g
+ArgumentDec : a
+ArgumentDec : a
+ArgumentDec : b
+ArgumentDec : v1
+ArgumentDec : s1
+Built-in : display
+VarDec : i
+Operator : *
+VarDec : j
+Operator : *
+Built-in : display
+Operator : *
+Operator : /
+Conditional : if
+Operator : -
+Operator : ==
+Append
+Operator : *
+Conditional : else
+Append
+Operator : *
+Operator : /
+Loop : while
+Operator : ==
+Operator : -
+FunctionDec : f
+ArgumentDec : a
+ArgumentDec : b
+Return
+Operator : +
+Operator : *
+Main
+VarDec : num
+Size
+Operator : *
+Operator : +
+Built-in : display
+Operator : *
+Built-in : display
+Size
+Operator : /
+VarDec : a
+Operator : *
+Operator : +
