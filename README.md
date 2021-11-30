@@ -4,4 +4,4 @@ This repository contains my Compiler and Programming Languages Design course pro
 We will develop a new language called C-- in 4 phases.
 
 1. Phase 1 : Lexical and Syntax analyser
-
+2. Phase 2 : Symbol table and AST tree
