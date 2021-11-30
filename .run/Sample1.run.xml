@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Sample1" type="Application" factoryName="Application">
+    <output_file path="$PROJECT_DIR$/src/Phase2/samples/out1.txt" is_save="true" />
+    <option name="MAIN_CLASS_NAME" value="main.Cmm" />
+    <module name="Compiler" />
+    <option name="PROGRAM_PARAMETERS" value="Src\Phase2\samples\sample1.cmm" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
