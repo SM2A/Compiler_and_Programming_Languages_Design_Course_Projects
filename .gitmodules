@@ -4,3 +4,6 @@
 [submodule "Phase 2"]
 	path = Phase 2
 	url = https://github.com/SM2A/PLC_P2
+[submodule "Phase 3"]
+	path = Phase 3
+	url = https://github.com/SM2A/PLC_P3
